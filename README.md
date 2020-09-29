@@ -1,1 +1,3 @@
 # Tienda
+
+![Screenshot](screenshot.png)
