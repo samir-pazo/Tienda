@@ -1,0 +1,100 @@
+
+CREATE DATABASE Tienda
+GO
+USE Tienda
+GO
+
+CREATE TABLE Category
+(
+CategoryId	INT IDENTITY(1,1) PRIMARY KEY, 
+CategoryName VARCHAR(50) NOT NULL,
+RegisterDate DATETIME NOT NULL
+)
+GO
+
+CREATE TABLE Product
+(
+ProductId INT IDENTITY(1,1) PRIMARY KEY,
+ProductName VARCHAR(150) NOT NULL, 
+Price DECIMAL(12,2) NOT NULL,
+Stock DECIMAL(12,2) NOT NULL ,
+CategoryId INT NOT NULL, 
+FOREIGN KEY (CategoryId) REFERENCES Category(CategoryId)
+)
+GO
+
+--procedimientos almacenados
+CREATE PROCEDURE [usp.Category.GetAll]
+AS BEGIN
+	SELECT c.CategoryId,c.CategoryName,c.RegisterDate FROM Category c
+END
+GO
+
+CREATE PROCEDURE [usp.Product.GetAll]
+AS BEGIN
+	SELECT p.ProductId,p.ProductName,p.Price,p.Stock,p.CategoryId,c.CategoryName FROM Product p 
+				INNER JOIN Category c ON c.CategoryId = p.CategoryId
+				ORDER BY p.ProductId DESC
+END
+GO
+
+CREATE PROCEDURE [usp.Product.GetByName]
+(
+@filter	VARCHAR(50)
+)
+AS BEGIN
+	SELECT p.ProductId,p.ProductName,p.Price,p.Stock,p.CategoryId,c.CategoryName FROM Product p 
+				INNER JOIN Category c ON c.CategoryId = p.CategoryId
+				WHERE p.ProductName LIKE '%' + @filter + '%'
+				ORDER BY p.ProductId DESC
+END
+GO
+GO 
+
+CREATE PROCEDURE [usp.Product.Register]
+(
+@ProductName VARCHAR(150), 
+@Price DECIMAL(12,2),
+@Stock DECIMAL(12,2)  ,
+@CategoryId INT
+)
+AS BEGIN
+	INSERT INTO Product(ProductName,Price,Stock,CategoryId)
+				VALUES(@ProductName,@Price,@Stock,@CategoryId)
+END
+GO
+
+CREATE PROCEDURE [usp.Product.Update]
+(
+@ProductId INT,
+@ProductName VARCHAR(150), 
+@Price DECIMAL(12,2),
+@Stock DECIMAL(12,2)  ,
+@CategoryId INT
+)
+AS BEGIN
+	UPDATE Product SET ProductName = @ProductName,
+						Price = @Price,
+						Stock = @Stock,
+						CategoryId = @CategoryId
+						WHERE ProductId = @ProductId
+			 
+END
+GO
+
+ CREATE PROCEDURE [usp.Product.Delete]
+(
+@ProductId INT
+)
+AS BEGIN
+	DELETE FROM Product WHERE ProductId = @ProductId
+			 
+END
+
+GO
+--insertamos categorias de prueba
+INSERT INTO Category(CategoryName,RegisterDate) VALUES ('Abarrotes',GETDATE())
+GO
+INSERT INTO Category(CategoryName,RegisterDate) VALUES ('Embutidos',GETDATE())
+GO
+
