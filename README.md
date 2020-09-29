@@ -1,3 +1,3 @@
 # Tienda
 
-![Screenshot](screenshot.png)
+![Screenshot](screenshot.PNG)
